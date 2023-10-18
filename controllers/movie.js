@@ -5,8 +5,8 @@ const ForbiddenError = require('../errors/ForbiddenError');
 const Movie = require('../models/movie');
 
 module.exports.getAllMovies = (req, res, next) => {
-  Movie.find({})
-    .then((cards) => res.send(cards))
+  Movie.find({ owner: req.user._id })
+    .then((cards) => res.send({ data: cards }))
     .catch(next);
 };
 
@@ -30,7 +30,8 @@ module.exports.createMovie = (req, res, next) => {
     nameRU,
     nameEN,
   })
-    .then((movie) => res.status('201').send({ data: movie }))
+
+    .then((movie) => res.status(201).send({ data: movie }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new ValidationError('Переданы некорректные данные'));

@@ -1,4 +1,4 @@
-module.exports = (err, req, res, next) => {
+const errorHandler = (err, req, res, next) => {
   const { status = 500 } = err;
   let { message } = err;
   if (status === 500) {
@@ -8,3 +8,5 @@ module.exports = (err, req, res, next) => {
 
   next();
 };
+
+module.exports = errorHandler;

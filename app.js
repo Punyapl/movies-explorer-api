@@ -3,6 +3,7 @@ const console = require('console');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
 const cors = require('cors');
 const { errors } = require('celebrate');
 const { MONGODB_URL } = require('./utils/constants');
@@ -13,6 +14,7 @@ const router = require('./routes/index');
 const app = express();
 
 app.use(cors());
+app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

@@ -30,6 +30,9 @@ module.exports.updateUser = (req, res, next) => {
       if (err.name === 'ValidationError') {
         return next(new ValidationError('Переданы некорректные данные'));
       }
+      if (err.code === 11000) {
+        return next(new ConflictError('Пользователь с таким email уже существует'));
+      }
       return next(err);
     });
 };
@@ -41,7 +44,7 @@ module.exports.createUser = (req, res, next) => {
     email,
     password: hash,
   })
-    .then((user) => res.status('201').send({
+    .then((user) => res.status(201).send({
       _id: user._id,
       name: user.name,
       email: user.email,
