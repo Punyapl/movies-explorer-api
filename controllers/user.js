@@ -68,12 +68,16 @@ module.exports.login = (req, res, next) => {
         console.log(`Контроллер логина. Пользователь с email = "${email}" не найден в БД`);
         throw new UnauthorizedError('Неверные данные для входа');
       }
-      const passwordCompare = bcrypt.compare(password, user.password);
-      if (!passwordCompare) {
-        throw new UnauthorizedError('Неверные данные для входа');
-      }
-      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'secretkey', { expiresIn: '7d' });
-      return res.send({ jwt: token });
+      bcrypt.compare(password, user.password)
+        // console.log(bcrypt.compare(password, user.password).then((r) => console.log(r)));
+        .then((matched) => {
+          if (!matched) {
+            throw new UnauthorizedError('Неверные данные для входа');
+          }
+          const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'secretkey', { expiresIn: '7d' });
+          return res.send({ jwt: token });
+        })
+        .catch(next);
     })
     .catch((err) => {
       console.dir(err);
